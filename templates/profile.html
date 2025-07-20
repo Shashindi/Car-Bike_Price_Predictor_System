@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% block page_style %}
+<style>
+body {
+    background: url('{{ url_for('static', filename='istockphoto-1336490790-612x612.jpg') }}') no-repeat center center fixed;
+    background-size: cover;
+}
+</style>
+{% endblock %}
+{% block content %}
+<style>
+    .profile-outer {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .profile-card {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(102,126,234,0.13);
+        padding: 40px 32px 32px 32px;
+        text-align: center;
+        max-width: 420px;
+        width: 100%;
+        position: relative;
+        border: 3px solid #764ba2;
+        margin: 32px 0;
+        transition: box-shadow 0.2s;
+    }
+    .profile-card:hover {
+        box-shadow: 0 16px 48px rgba(102,126,234,0.18);
+    }
+    .profile-avatar-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 18px;
+    }
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #667eea;
+        background: #f8f9fa;
+        box-shadow: 0 4px 16px #764ba2aa;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .profile-avatar-wrapper:hover .profile-avatar {
+        border-color: #764ba2;
+        box-shadow: 0 8px 24px #764ba2bb;
+    }
+    .edit-avatar-label {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        background: #764ba2;
+        color: #fff;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px #764ba244;
+        cursor: pointer;
+        border: 2px solid #fff;
+        font-size: 1.3rem;
+        transition: background 0.2s, color 0.2s;
+    }
+    .edit-avatar-label:hover {
+        background: #fff;
+        color: #764ba2;
+        border: 2px solid #764ba2;
+    }
+    .profile-title {
+        font-weight: 800;
+        font-size: 2rem;
+        color: #764ba2;
+        margin-bottom: 0.2em;
+        letter-spacing: 1px;
+    }
+    .profile-subtitle {
+        font-size: 1.1rem;
+        color: #888;
+        margin-bottom: 1.2em;
+        font-weight: 500;
+    }
+    .profile-email {
+        color: #555;
+        font-size: 1.05rem;
+        background: #f3f4fa;
+        border-radius: 8px;
+        padding: 8px 18px;
+        display: inline-block;
+        font-weight: 500;
+        margin-bottom: 1.2em;
+    }
+    .divider {
+        border-top: 1.5px solid #eee;
+        margin: 1.5em 0 1.2em 0;
+    }
+    .profile-form-group {
+        margin-bottom: 1.2rem;
+        text-align: left;
+    }
+    .profile-form-label {
+        font-weight: 700;
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    .profile-form-label i {
+        margin-right: 8px;
+    }
+    .profile-form-input {
+        border-radius: 12px;
+        border: 1.5px solid #c3c6e4;
+        padding: 0.7rem 1.1rem;
+        font-size: 1.08rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 1px 4px rgba(102,126,234,0.07);
+        background: #f8f9fa;
+        color: #333;
+    }
+    .profile-form-input:focus {
+        border-color: #764ba2;
+        box-shadow: 0 0 0 2px #f093fb44;
+        background: #fff;
+    }
+    .profile-update-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 38px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.18);
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        outline: none;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    .profile-update-btn:hover, .profile-update-btn:focus {
+        background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+        box-shadow: 0 12px 32px 0 #f093fb55, 0 8px 25px rgba(102, 126, 234, 0.18);
+        color: #fff;
+    }
+    .profile-action-btn {
+        margin-top: 18px;
+        font-size: 1rem;
+        border-radius: 18px;
+        padding: 10px 28px;
+        font-weight: 600;
+        margin-right: 10px;
+        transition: background 0.2s;
+    }
+    .profile-action-btn:hover {
+        background: #764ba2;
+        color: #fff;
+    }
+    .profile-delete-btn {
+        background: #e74c3c;
+        border: none;
+        color: #fff;
+        margin-top: 18px;
+        font-size: 1rem;
+        border-radius: 18px;
+        padding: 10px 28px;
+        font-weight: 600;
+        margin-left: 10px;
+        transition: background 0.2s;
+    }
+    .profile-delete-btn:hover {
+        background: #c0392b;
+    }
+    @media (max-width: 600px) {
+        .profile-card {
+            padding: 18px 4px 18px 4px;
+        }
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+        }
+    }
+</style>
+<div class="profile-outer">
+    <div class="profile-card position-relative">
+        <div class="profile-avatar-wrapper" title="Change profile picture">
+            <img src="{{ url_for('static', filename=user.profile_pic or 'default_profile.png') }}" class="profile-avatar" id="profileAvatar">
+            <label for="profile_pic" class="edit-avatar-label" title="Change profile picture">
+                <i class="fa fa-camera"></i>
+            </label>
+        </div>
+        <div class="profile-title"><i class="fa fa-user-circle"></i> {{ user.username or '' }}</div>
+        <div class="profile-email"><i class="fa fa-envelope"></i> {{ user.email }}</div>
+        <div class="divider"></div>
+        <form method="POST" enctype="multipart/form-data" class="mt-4">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="profile-form-group">
+                <label for="username" class="profile-form-label"><i class="fa fa-user"></i> Username</label>
+                <input type="text" class="profile-form-input" id="username" name="username" value="{{ user.username or '' }}" required>
+            </div>
+            <input type="file" class="d-none" id="profile_pic" name="profile_pic" accept="image/*">
+            <button type="submit" class="profile-update-btn" title="Save changes"><i class="fa fa-save"></i> Update Profile</button>
+        </form>
+        <div class="d-flex justify-content-center mt-3">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary profile-action-btn" title="Logout"><i class="fa fa-sign-out"></i> Logout</a>
+            <form method="POST" action="{{ url_for('auth.delete_account') }}" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="profile-delete-btn" title="Delete your account" onclick="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                    <i class="fa fa-trash"></i> Delete Profile
+                </button>
+            </form>
+        </div>
+       
+    </div>
+</div>
+<script>
+// When the edit icon is clicked, trigger the file input
+const editLabel = document.querySelector('.edit-avatar-label');
+if (editLabel) {
+    editLabel.addEventListener('click', function() {
+        document.getElementById('profile_pic').click();
+    });
+}
+// Optional: Show preview of new profile picture
+const profilePicInput = document.getElementById('profile_pic');
+if (profilePicInput) {
+    profilePicInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('profileAvatar').src = ev.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+}
+</script>
+{% endblock %} 

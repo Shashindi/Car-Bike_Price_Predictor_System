@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .prediction-form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0;
+    }
+    .form-section {
+        border: 6px solid;
+        border-image: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) 1;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.18), 0 2px 8px rgba(118, 75, 162, 0.08);
+        background: linear-gradient(135deg, #f3f4fa 0%, #e9e4f0 100%);
+        border-radius: 32px;
+        padding: 48px 40px 40px 40px;
+        margin: 0 auto;
+        transition: box-shadow 0.3s;
+        position: relative;
+        z-index: 2;
+        overflow: visible;
+    }
+    .form-section:hover {
+        box-shadow: 0 16px 48px 0 rgba(102, 126, 234, 0.25), 0 4px 16px rgba(118, 75, 162, 0.12), 0 0 16px 2px #f093fb66;
+        border-image: linear-gradient(135deg, #764ba2 0%, #f093fb 100%) 1;
+    }
+    .card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+    .form-group {
+        margin-bottom: 2.2rem;
+    }
+    .form-label {
+        font-size: 1.13rem;
+        font-weight: 700;
+        color: #4e54c8;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        display: block;
+        transition: color 0.2s, text-shadow 0.2s;
+        text-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    }
+    .form-label .sparkle {
+        color: #f093fb;
+        font-size: 1.1em;
+        margin-left: 2px;
+    }
+    .form-label:focus, .form-label:hover {
+        color: #764ba2;
+        text-shadow: 0 2px 12px #f093fb;
+    }
+    #imageCover img {
+        box-shadow: 0 8px 32px rgba(102,126,234,0.18), 0 2px 8px #f093fb33;
+        border: 2.5px solid #f093fb;
+        background: #fff;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s;
+        animation: floatImage 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatImage {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-10px) scale(1.04); }
+    }
+    .form-control, .form-check-input {
+        box-shadow: 0 2px 12px rgba(102,126,234,0.10);
+        background: linear-gradient(90deg, #f8fafc 0%, #f3e9ff 100%);
+    }
+    .form-control:focus, .form-check-input:focus {
+        box-shadow: 0 0 0 2px #f093fb44, 0 2px 12px rgba(102,126,234,0.18);
+    }
+    .form-check-label {
+        font-weight: 500;
+        color: #4e54c8;
+        margin-left: 4px;
+        transition: color 0.2s;
+    }
+    .form-check-input:checked + .form-check-label {
+        color: #f093fb;
+        font-weight: 700;
+    }
+    .radio-group {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .calendar-container {
+        position: relative;
+    }
+    .calendar-icon {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #764ba2;
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+    .year-selector {
+        z-index: 10;
+    }
+    @media (max-width: 900px) {
+        .prediction-form-container {
+            max-width: 98vw;
+        }
+        .form-section {
+            padding: 32px 10px 24px 10px;
+        }
+    }
+    .btn-primary#btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s cubic-bezier(.4,0,.2,1);
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        outline: none;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-primary#btn:hover, .btn-primary#btn:focus {
+        background: linear-gradient(135deg, #764ba2 0%, #f093fb 100%);
+        box-shadow: 0 12px 32px 0 #f093fb55, 0 8px 25px rgba(102, 126, 234, 0.3);
+        transform: translateY(-2px) scale(1.04);
+    }
+    .btn-primary#btn::after {
+        content: '';
+        position: absolute;
+        left: -60%;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.0) 100%);
+        transform: skewX(-20deg);
+        transition: left 0.5s cubic-bezier(.4,0,.2,1);
+        pointer-events: none;
+    }
+    .btn-primary#btn:hover::after, .btn-primary#btn:focus::after {
+        left: 120%;
+        transition: left 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .input-icon-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        color: #764ba2;
+        font-size: 1.1rem;
+        z-index: 2;
+    }
+    .input-icon + .form-control {
+        padding-left: 2.2rem;
+    }
+</style>
+<div class="container prediction-form-container">
+    <div class="prediction-welcome-section mb-5 p-4" style="background: linear-gradient(120deg, #667eea 0%, #764ba2 100%); color: #fff; border-radius: 32px; box-shadow: 0 8px 32px rgba(102,126,234,0.12); text-align: center;">
+        <h2 class="prediction-welcome-title shine-effect mb-2" style="font-size: 2.2rem; font-weight: 800; letter-spacing: 1px; position: relative; overflow: hidden; cursor: pointer;">
+            Car & MotorCycle Price Predictor
+        </h2>
+    </div>
+    <style>
+    .shine-effect::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -75%;
+        width: 50%; height: 100%;
+        background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.0) 100%);
+        transform: skewX(-20deg);
+        transition: left 0.4s cubic-bezier(.4,0,.2,1);
+        pointer-events: none;
+    }
+    .shine-effect:hover::after {
+        left: 120%;
+        transition: left 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    </style>
+    <div class="card">
+        <form class="form-section" method="POST" action="{{ url_for('estimatedResult') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="corner-decoration top-left"></div>
+            <div class="corner-decoration top-right"></div>
+            <div class="corner-decoration bottom-left"></div>
+            <div class="corner-decoration bottom-right"></div>
+            <!-- Automotive Model Selection -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Automotive Model Selection <i class="fa fa-motorcycle"></i></label>
+                <select id="vehicle" onchange="vehicle_change()" name="vehicle" class="form-control" required>
+                    <option disabled selected value="">-- Select a vehicle model --</option>
+                    {% for v in vehicle %}
+                        <option value="{{ v }}">{{ v.title() }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <div class="col-md-4" id="imageName"></div>
+                <div class="col-md-8" id="imageCover"></div>
+            </div>
+            <script>
+            // Mapping from vehicle model names to image filenames
+            const vehicleImageMap = {
+                'ritz': 'ritz.jpg',
+                'sx4': 'sx4.jpg',
+                'ciaz': 'ciaz.jpg',
+                'wagon r': 'wagon r.jpg',
+                'swift': 'swift.jpg',
+                'vitara brezza': 'vitara brezza.jpg',
+                's cross': 's cross.jpg',
+                'alto 800': 'alto 800.jpg',
+                'alto k10': 'alto k10.jpg',
+                'ignis': 'ignis.jpg',
+                'ertiga': 'ertiga.jpg',
+                'dzire': 'dzire.jpg',
+                '800': '800.jpg',
+                'baleno': 'baleno.jpg',
+                'omni': 'omni.jpg',
+                'fortuner': 'fortuner.jpg',
+                'innova': 'innova.jpg',
+                'corolla altis': 'corolla altis.jpg',
+                'etios cross': 'etios cross.jpg',
+                'etios g': 'etios g.jpg',
+                'etios liva': 'etios liva.jpg',
+                'camry': 'camry.jpg',
+                'corolla': 'corolla.jpg',
+                'elantra': 'elantra.jpg',
+                'eon': 'eon.jpg',
+                'brio': 'brio.jpg',
+                'amaze': 'amaze.jpg',
+                'creta': 'creta.jpg',
+                'grand i10': 'grand i10.jpg',
+                'jazz': 'jazz.jpg',
+                'land cruiser': 'land cruiser.jpg',
+                // Add more mappings as needed for your dataset and images
+            };
+            function vehicle_change() {
+                var select = document.getElementById('vehicle');
+                var vehicle = select.value;
+                var imageDiv = document.getElementById('imageCover');
+                if (!vehicle) {
+                    imageDiv.innerHTML = '';
+                    return;
+                }
+                var key = vehicle.toLowerCase().trim();
+                var imageName = vehicleImageMap[key] || (key + '.jpg');
+                var imagePath = '/static/vehicle images/' + imageName;
+                var img = document.createElement('img');
+                img.src = imagePath;
+                img.alt = vehicle + ' image';
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '180px';
+                img.style.borderRadius = '18px';
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = '/static/car.png'; // fallback image
+                };
+                imageDiv.innerHTML = '';
+                imageDiv.appendChild(img);
+            }
+            // If the page loads with a pre-selected vehicle, show its image
+            document.addEventListener('DOMContentLoaded', function() {
+                vehicle_change();
+            });
+            </script>
+            <!-- Manufacturing Year -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Manufacturing Year <i class="fa fa-motorcycle"></i></label>
+                <select id="year" name="year" class="form-control" required>
+                    <option disabled selected value="">-- Select year --</option>
+                </select>
+            </div>
+            <script>
+            // Populate year dropdown from 2000 to current year
+            document.addEventListener('DOMContentLoaded', function() {
+                var yearSelect = document.getElementById('year');
+                if (yearSelect) {
+                    var currentYear = new Date().getFullYear();
+                    for (var y = currentYear; y >= 2000; y--) {
+                        var opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = y;
+                        yearSelect.appendChild(opt);
+                    }
+                }
+            });
+            </script>
+            <!-- Showroom Price -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Showroom Price (Sri Lankan Rupees) <i class="fa fa-motorcycle"></i></label>
+                <div class="input-icon-group">
+                    <span class="input-icon"></i></span>
+                    <input type="text" id="show_room_price" name="show_room_price" class="form-control" placeholder="Enter showroom price (Rs.)" inputmode="numeric" pattern="[0-9]*" required>
+                </div>
+            </div>
+            <!-- Total Distance Traveled -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Total Distance Traveled (Kilometers) <i class="fa fa-motorcycle"></i></label>
+                <div class="input-icon-group">
+                    <span class="input-icon"></span>
+                    <input type="text" id="kilometers" name="kilometers" class="form-control" placeholder="Enter total kilometers driven" inputmode="numeric" pattern="[0-9]*" required>
+                </div>
+            </div>
+            <!-- Vehicle Ownership History -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Vehicle Ownership History <i class="fa fa-motorcycle"></i></label>
+                <div class="radio-group">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="owner" id="owner_first" value="First" required>
+                        <label class="form-check-label" for="owner_first">First Owner</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="owner" id="owner_second" value="Second">
+                        <label class="form-check-label" for="owner_second">Second Owner</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="owner" id="owner_third" value="Third">
+                        <label class="form-check-label" for="owner_third">Third Owner</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="owner" id="owner_fourth" value="Fourth & Above">
+                        <label class="form-check-label" for="owner_fourth">Fourth & Above</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Fuel Type Configuration -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Fuel Type Configuration <i class="fa fa-motorcycle"></i></label>
+                <div class="radio-group">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="fuel" id="fuel_petrol" value="Petrol" required>
+                        <label class="form-check-label" for="fuel_petrol">Petrol</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="fuel" id="fuel_diesel" value="Diesel">
+                        <label class="form-check-label" for="fuel_diesel">Diesel</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="fuel" id="fuel_cng" value="CNG">
+                        <label class="form-check-label" for="fuel_cng">CNG</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="fuel" id="fuel_lpg" value="LPG">
+                        <label class="form-check-label" for="fuel_lpg">LPG</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Seller Type Classification -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Seller Type Classification <i class="fa fa-motorcycle"></i></label>
+                <div class="radio-group">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="seller" id="seller_dealer" value="Dealer" required>
+                        <label class="form-check-label" for="seller_dealer">Dealer</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="seller" id="seller_individual" value="Individual">
+                        <label class="form-check-label" for="seller_individual">Individual</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Transmission System -->
+            <div class="form-group">
+                <label class="form-label"><i class="fa fa-car"></i> Transmission System <i class="fa fa-motorcycle"></i></label>
+                <div class="radio-group">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="transmission" id="transmission_manual" value="Manual" required>
+                        <label class="form-check-label" for="transmission_manual">Manual</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="transmission" id="transmission_automatic" value="Automatic">
+                        <label class="form-check-label" for="transmission_automatic">Automatic</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Estimate Button -->
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary" id="btn">
+                    <i class="fa fa-calculator"></i> Calculate Estimated Price
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

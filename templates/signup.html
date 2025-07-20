@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block page_style %}
+<style>
+body {
+    background: url('{{ url_for('static', filename='images.jpeg') }}') no-repeat center center fixed !important;
+    background-size: cover !important;
+}
+</style>
+{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<style>
+    .form-label {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: #333;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+        display: block;
+        padding-left: 2px;
+    }
+    .form-label i {
+        margin-right: 6px;
+        color: #667eea;
+        font-size: 1rem;
+        vertical-align: middle;
+    }
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Sign Up</h2>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa fa-envelope"></i> Email</label>
+                            {{ form.email(class="form-control") }}
+                            {% for error in form.email.errors %}
+                                <div class="alert alert-danger mt-2">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa fa-lock"></i> Password</label>
+                            {{ form.password(class="form-control") }}
+                            {% for error in form.password.errors %}
+                                <div class="alert alert-danger mt-2">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><i class="fa fa-lock"></i> Confirm Password</label>
+                            {{ form.confirm(class="form-control") }}
+                            {% for error in form.confirm.errors %}
+                                <div class="alert alert-danger mt-2">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group text-center mt-4">
+                            {{ form.submit(class="btn btn-primary btn-block") }}
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('auth.login') }}">Already have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %} 
